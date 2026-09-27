@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathzo - Precision Career Intelligence Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #030305;
+            --accent-primary: #f97316;
+            --accent-secondary: #f59e0b;
+            --accent-glow: rgba(249, 115, 22, 0.12);
+            --card-bg: rgba(15, 15, 22, 0.85);
+            --border-glow: rgba(249, 115, 22, 0.25);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            scroll-behavior: smooth;
+        }
+
+        .hero-grid {
+            background-image: radial-gradient(rgba(249, 115, 22, 0.07) 1px, transparent 1px);
+            background-size: 36px 36px;
+        }
+
+        .custom-glow {
+            box-shadow: 0 0 50px -15px var(--accent-glow);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-btn {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .gradient-btn:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+
+        .featured-card {
+            background: linear-gradient(145deg, rgba(24, 18, 22, 0.9), rgba(12, 12, 18, 0.95));
+            border: 1px solid rgba(249, 115, 22, 0.5);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .featured-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(249, 115, 22, 0.2);
+        }
+
+        .standard-card {
+            background: rgba(14, 14, 20, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .standard-card:hover {
+            border-color: rgba(249, 115, 22, 0.35);
+            transform: translateY(-3px);
+            background: rgba(18, 18, 26, 0.85);
+        }
+
+        .nav-item-active {
+            background: rgba(249, 115, 22, 0.12);
+            border-color: rgba(249, 115, 22, 0.3);
+            color: #fb923c !important;
+        }
+
+        @keyframes popInSmooth {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .pop-in-anim {
+            animation: popInSmooth 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @media print {
+            body { background: #ffffff !important; color: #000000 !important; }
+            aside, header, footer, button, .no-print { display: none !important; }
+            main { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen selection:bg-orange-500 selection:text-black relative overflow-x-hidden flex hero-grid">
+
+    <!-- AI Loading Screen -->
+    <div id="ai-loader" class="fixed inset-0 bg-[#030305] z-50 flex flex-col items-center justify-center space-y-4 transition-opacity duration-500">
+        <div class="w-12 h-12 rounded-2xl gradient-btn flex items-center justify-center animate-bounce shadow-lg shadow-orange-500/50">
+            <span class="text-2xl font-black text-black">P</span>
+        </div>
+        <div class="text-center space-y-1 px-4">
+            <h3 class="text-white font-extrabold text-sm tracking-wide">Pathzo AI Engine is Initializing...</h3>
+            <p class="text-neutral-500 text-xs">Loading precision career intelligence dashboard</p>
+        </div>
+        <div class="w-48 bg-neutral-900 h-1.5 rounded-full overflow-hidden border border-neutral-800">
+            <div id="loader-bar" class="bg-gradient-to-r from-orange-500 to-amber-500 h-full w-0 transition-all duration-75"></div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR NAVIGATION (Desktop) -->
+    <aside class="hidden lg:flex flex-col w-64 bg-[#050508]/95 border-r border-neutral-800/80 p-6 z-30 sticky top-0 h-screen justify-between backdrop-blur-xl">
+        <div class="space-y-8">
+            <div class="flex items-center space-x-2.5 cursor-pointer" onclick="switchTab('overview')">
+                <div class="w-10 h-10 rounded-2xl gradient-btn flex items-center justify-center shadow-lg shadow-orange-500/30">
+                    <span class="text-xl font-black text-black">P</span>
+                </div>
+                <span class="text-2xl font-black tracking-tight gradient-text">Pathzo</span>
+            </div>
+
+            <nav class="space-y-1.5 text-xs font-semibold">
+                <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition nav-item-active">
+                    <span>📊</span>
+                    <span>Dashboard Overview</span>
+                </button>
+                <button onclick="switchTab('careers')" id="nav-careers" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition">
+                    <span>🎯</span>
+                    <span>Career Pathways</span>
+                </button>
+                <button onclick="switchTab('roadmap')" id="nav-roadmap" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition">
+                    <span>🗺️</span>
+                    <span>90-Day Roadmap</span>
+                </button>
+                <button onclick="switchTab('resume')" id="nav-resume" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition">
+                    <span>📄</span>
+                    <span>AI ATS Resume Scanner</span>
+                </button>
+                <button onclick="switchTab('linkedin')" id="nav-linkedin" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition">
+                    <span>🔗</span>
+                    <span>LinkedIn & Portfolio Audit</span>
+                </button>
+                <button onclick="switchTab('interview')" id="nav-interview" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition">
+                    <span>🎙️</span>
+                    <span>AI Mock Interview</span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-neutral-400 hover:text-white hover:bg-neutral-900/60 transition">
+                    <span>⚙️</span>
+                    <span>Profile & Settings</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="pt-6 border-t border-neutral-800/80 space-y-3">
+            <div class="flex items-center space-x-3 p-3 rounded-xl bg-neutral-900/50 border border-neutral-800/80">
+                <div class="w-8 h-8 rounded-full gradient-btn flex items-center justify-center font-bold text-black text-xs" id="user-avatar-initial">S</div>
+                <div class="overflow-hidden">
+                    <div id="sidebar-student-name" class="text-xs font-bold text-white truncate">Student</div>
+                    <div class="text-[10px] text-emerald-400 flex items-center space-x-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>Active Session</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="logoutUser()" class="w-full py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-bold text-xs hover:bg-red-500/20 transition">
+                Logout Session
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div class="flex-grow flex flex-col min-h-screen">
+        
+        <!-- TOP HEADER -->
+        <header class="sticky top-0 z-40 bg-[#030305]/90 backdrop-blur-xl border-b border-neutral-800/80 px-4 sm:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 lg:hidden">
+                <div class="w-9 h-9 rounded-xl gradient-btn flex items-center justify-center">
+                    <span class="text-lg font-black text-black">P</span>
+                </div>
+                <span class="text-xl font-black gradient-text">Pathzo</span>
+            </div>
+
+            <div class="hidden lg:block">
+                <h1 id="current-page-title" class="text-base font-extrabold text-white">Dashboard Overview</h1>
+                <p class="text-xs text-neutral-400">Precision career intelligence and analytics center</p>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="downloadPDFReport()" class="hidden sm:flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-xs font-bold text-neutral-300 hover:text-white transition">
+                    <span>📥</span>
+                    <span>Export PDF</span>
+                </button>
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- MOBILE NAV DRAWER -->
+        <div id="mobile-menu" class="hidden lg:hidden fixed inset-x-0 top-[73px] bg-[#030305]/98 backdrop-blur-2xl border-b border-neutral-800 p-6 z-40 space-y-4 shadow-2xl">
+            <nav class="flex flex-col space-y-2 text-xs font-semibold text-neutral-300">
+                <button onclick="switchTab('overview'); toggleMobileMenu();" class="p-3 text-left rounded-xl hover:bg-neutral-900 hover:text-orange-400 transition">📊 Dashboard Overview</button>
+                <button onclick="switchTab('careers'); toggleMobileMenu();" class="p-3 text-left rounded-xl hover:bg-neutral-900 hover:text-orange-400 transition">🎯 Career Pathways</button>
+                <button onclick="switchTab('roadmap'); toggleMobileMenu();" class="p-3 text-left rounded-xl hover:bg-neutral-900 hover:text-orange-400 transition">🗺️ 90-Day Roadmap</button>
+                <button onclick="switchTab('resume'); toggleMobileMenu();" class="p-3 text-left rounded-xl hover:bg-neutral-900 hover:text-orange-400 transition">📄 AI ATS Resume Scanner</button>
+                <button onclick="switchTab('linkedin'); toggleMobileMenu();" class="p-3 text-left rounded-xl hover:bg-neutral-900 hover:text-orange-400 transition">🔗 LinkedIn & Portfolio Audit</button>
+                <button onclick="switchTab('interview'); toggleMobileMenu();" class="p-3 text-left rounded-xl hover:bg-neutral-900 hover:text-orange-400 transition">🎙️ AI Mock Interview</button>
+                <button onclick="switchTab('settings'); toggleMobileMenu();" class="p-3 text-left rounded-xl hover:bg-neutral-900 hover:text-orange-400 transition">⚙️ Profile & Settings</button>
+            </nav>
+            <div class="pt-4 border-t border-neutral-800 flex justify-between items-center">
+                <span class="text-xs text-neutral-400" id="mobile-user-display">Student</span>
+                <button onclick="logoutUser()" class="text-xs font-bold px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">Logout</button>
+            </div>
+        </div>
+
+        <!-- DYNAMIC TAB CONTENT CONTAINER -->
+        <main class="flex-grow p-4 sm:p-8 max-w-7xl mx-auto w-full space-y-6">
+
+            <!-- TAB 1: OVERVIEW -->
+            <div id="tab-content-overview" class="space-y-6 pop-in-anim">
+                <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="backdrop-blur-2xl rounded-3xl custom-glow p-6 sm:p-10 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="absolute top-0 left-0 right-0 h-[3px]" style="background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);"></div>
+                    <div class="space-y-3 text-center md:text-left w-full">
+                        <div class="inline-flex items-center space-x-2 bg-orange-500/10 px-3.5 py-1 rounded-full border border-orange-500/20">
+                            <span class="text-xs font-bold text-orange-400 uppercase tracking-widest" id="report-stream-tag">Analysis Report</span>
+                        </div>
+                        <h2 id="main-career-title" class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-snug">
+                            Your Top Career Match is <span class="gradient-text">Analyzing...</span>
+                        </h2>
+                        <p id="main-career-desc" class="text-xs sm:text-sm text-neutral-400 max-w-2xl leading-relaxed">
+                            Processing your specific answers, aptitude, and experience to generate your precision career roadmap.
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center p-6 rounded-3xl bg-gradient-to-b from-neutral-900 to-neutral-950 border border-neutral-800 w-full md:min-w-[170px] shadow-2xl relative">
+                        <div id="match-score-badge" class="text-4xl font-black gradient-text">95%</div>
+                        <div class="text-[11px] font-bold text-neutral-400 uppercase tracking-widest mt-1.5">Match Accuracy</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-6 sm:p-8 space-y-4">
+                        <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                            <span>⚡</span>
+                            <span>Skill Gap Readiness</span>
+                        </h3>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-neutral-300">Core Technical Proficiency</span>
+                                    <span class="text-orange-400">85%</span>
+                                </div>
+                                <div class="w-full bg-neutral-900 h-2 rounded-full overflow-hidden border border-neutral-800">
+                                    <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-full w-[85%]"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-neutral-300">Aptitude & Logic</span>
+                                    <span class="text-amber-400">90%</span>
+                                </div>
+                                <div class="w-full bg-neutral-900 h-2 rounded-full overflow-hidden border border-neutral-800">
+                                    <div class="bg-gradient-to-r from-orange-500 to-amber-500 h-full w-[90%]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-6 sm:p-8 space-y-4">
+                        <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                            <span>📈</span>
+                            <span>Market Intelligence</span>
+                        </h3>
+                        <div class="space-y-3 text-xs">
+                            <div class="p-3 rounded-2xl bg-neutral-950/60 border border-neutral-800 flex justify-between items-center">
+                                <span class="text-neutral-300 font-semibold">Job Growth Outlook</span>
+                                <span class="text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">+28% High</span>
+                            </div>
+                            <div class="p-3 rounded-2xl bg-neutral-950/60 border border-neutral-800 flex justify-between items-center">
+                                <span class="text-neutral-300 font-semibold">Average Package Scale</span>
+                                <span class="text-white font-bold">₹12 - ₹18 LPA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: CAREERS -->
+            <div id="tab-content-careers" class="space-y-4 hidden pop-in-anim">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-extrabold text-white tracking-tight">Top 3 Recommended Job Roles</h2>
+                    <span class="text-xs text-neutral-500">Curated via Precision Matching Algorithm</span>
+                </div>
+                <div id="careers-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            </div>
+
+            <!-- TAB 3: ROADMAP -->
+            <div id="tab-content-roadmap" class="space-y-6 hidden pop-in-anim">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-neutral-900/60 border border-neutral-800 p-6 rounded-3xl">
+                    <div class="space-y-1">
+                        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                            <span>🗺️</span>
+                            <span>Your 90-Day Action Roadmap & Progress</span>
+                        </h3>
+                        <p class="text-xs text-neutral-400">Complete tasks below to update your live progress tracker.</p>
+                    </div>
+                    <div class="flex items-center space-x-4 w-full sm:w-auto">
+                        <div class="text-right">
+                            <span id="roadmap-progress-text" class="text-sm font-black text-orange-400">0% Completed</span>
+                        </div>
+                        <div class="w-32 bg-neutral-950 h-2.5 rounded-full overflow-hidden border border-neutral-800">
+                            <div id="roadmap-progress-bar" class="bg-gradient-to-r from-orange-500 to-amber-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="roadmap-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-neutral-300"></div>
+            </div>
+
+            <!-- TAB 4: AI ATS RESUME SCANNER -->
+            <div id="tab-content-resume" class="space-y-6 hidden pop-in-anim">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Paste Resume Box -->
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-6 sm:p-8 space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="space-y-1">
+                                <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                                    <span>📄</span>
+                                    <span>Paste Your Resume Content</span>
+                                </h3>
+                                <p class="text-xs text-neutral-400">Our AI Heuristic engine evaluates semantic keywords, structural sections, and quantifiable metrics.</p>
+                            </div>
+                            <textarea id="resume-text-input" rows="10" placeholder="Paste your resume text here (Summary, Education, Experience, Skills, Projects)..." class="w-full p-4 bg-neutral-950 border border-neutral-800 rounded-2xl text-xs text-white focus:outline-none focus:border-orange-500 resize-none font-mono"></textarea>
+                        </div>
+                        <button onclick="scanResumeATS()" class="w-full py-3.5 gradient-btn text-black font-extrabold rounded-xl shadow-lg shadow-orange-500/20 text-xs mt-4">Run Advanced AI ATS Deep Scan ⚡</button>
+                    </div>
+
+                    <!-- AI ATS Score & Diagnostics Box -->
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+                        <div class="space-y-5">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-base font-bold text-white">AI ATS Diagnostics</h3>
+                                <span id="ats-score-pill" class="text-xs font-black px-3.5 py-1 rounded-full bg-neutral-900 text-neutral-400 border border-neutral-800">Pending Scan</span>
+                            </div>
+                            
+                            <div class="flex items-center space-x-6 p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800">
+                                <div class="text-5xl font-black gradient-text" id="ats-score-num">--</div>
+                                <div class="space-y-1">
+                                    <div class="text-xs font-bold text-white">Overall Compatibility Score</div>
+                                    <p id="ats-feedback-text" class="text-xs text-neutral-400 leading-relaxed">Paste your resume and run the deep scan to view structural breakdown and keyword mapping.</p>
+                                </div>
+                            </div>
+
+                            <!-- Section Audit Checklist -->
+                            <div class="space-y-2">
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Resume Section Audit:</div>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div id="audit-sec-experience" class="p-2 rounded-xl bg-neutral-950/50 border border-neutral-800 flex items-center space-x-2 text-neutral-400">
+                                        <span>⚪</span> <span>Experience Section</span>
+                                    </div>
+                                    <div id="audit-sec-education" class="p-2 rounded-xl bg-neutral-950/50 border border-neutral-800 flex items-center space-x-2 text-neutral-400">
+                                        <span>⚪</span> <span>Education Section</span>
+                                    </div>
+                                    <div id="audit-sec-skills" class="p-2 rounded-xl bg-neutral-950/50 border border-neutral-800 flex items-center space-x-2 text-neutral-400">
+                                        <span>⚪</span> <span>Skills Section</span>
+                                    </div>
+                                    <div id="audit-sec-metrics" class="p-2 rounded-xl bg-neutral-950/50 border border-neutral-800 flex items-center space-x-2 text-neutral-400">
+                                        <span>⚪</span> <span>Metrics & Numbers</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 pt-4 border-t border-neutral-800">
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">AI Recommended Missing Keywords:</div>
+                            <div id="ats-missing-keywords" class="flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 text-[11px]">Run scan to view AI recommendations</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: LINKEDIN & PORTFOLIO REVIEWER-->
+            <div id="tab-content-linkedin" class="space-y-6 hidden pop-in-anim">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Input Form Box -->
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-6 sm:p-8 space-y-4 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                                    <span>🔗</span>
+                                    <span>LinkedIn Profile & Portfolio Reviewer</span>
+                                </h3>
+                                <p class="text-xs text-neutral-400">Paste your LinkedIn headline, summary, and portfolio details to audit your personal brand and recruiter discoverability.</p>
+                            </div>
+
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <label class="block text-neutral-400 font-semibold mb-1">LinkedIn Headline</label>
+                                    <input type="text" id="li-headline-input" placeholder="e.g. Frontend Developer | React & Next.js | Building scalable web apps" class="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-orange-500">
+                                </div>
+                                <div>
+                                    <label class="block text-neutral-400 font-semibold mb-1">LinkedIn About / Summary Section</label>
+                                    <textarea id="li-summary-input" rows="4" placeholder="Paste your LinkedIn summary or bio here..." class="w-full p-4 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-orange-500 resize-none font-mono"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-neutral-400 font-semibold mb-1">Portfolio Link & Key Projects Description</label>
+                                    <textarea id="li-portfolio-input" rows="3" placeholder="Paste portfolio URL and brief description of your top 2 projects..." class="w-full p-4 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-orange-500 resize-none font-mono"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="scanLinkedInPortfolio()" class="w-full py-3.5 gradient-btn text-black font-extrabold rounded-xl shadow-lg shadow-orange-500/20 text-xs mt-4">Run AI LinkedIn & Portfolio Audit ⚡</button>
+                    </div>
+
+                    <!-- Audit Results & Feedback Box -->
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+                        <div class="space-y-5">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-base font-bold text-white">Brand Optimization Report</h3>
+                                <span id="li-score-pill" class="text-xs font-black px-3.5 py-1 rounded-full bg-neutral-900 text-neutral-400 border border-neutral-800">Pending Audit</span>
+                            </div>
+                            
+                            <div class="flex items-center space-x-6 p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800">
+                                <div class="text-5xl font-black gradient-text" id="li-score-num">--</div>
+                                <div class="space-y-1">
+                                    <div class="text-xs font-bold text-white">Recruiter Appeal Score</div>
+                                    <p id="li-feedback-text" class="text-xs text-neutral-400 leading-relaxed">Fill your LinkedIn headline and summary details on the left and run the audit to see AI recommendations.</p>
+                                </div>
+                            </div>
+
+                            <!-- Audit Checklist -->
+                            <div class="space-y-2">
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">Profile Elements Audit:</div>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div id="li-audit-headline" class="p-2 rounded-xl bg-neutral-950/50 border border-neutral-800 flex items-center space-x-2 text-neutral-400">
+                                        <span>⚪</span> <span>Headline Keywords</span>
+                                    </div>
+                                    <div id="li-audit-summary" class="p-2 rounded-xl bg-neutral-950/50 border border-neutral-800 flex items-center space-x-2 text-neutral-400">
+                                        <span>⚪</span> <span>Summary Storytelling</span>
+                                    </div>
+                                    <div id="li-audit-portfolio" class="p-2 rounded-xl bg-neutral-950/50 border border-neutral-800 flex items-center space-x-2 text-neutral-400">
+                                        <span>⚪</span> <span>Portfolio Link Attached</span>
+                                    </div>
+                                    <div id="li-audit-cta" class="p-2 rounded-xl bg-neutral-950/50 border border-neutral-800 flex items-center space-x-2 text-neutral-400">
+                                        <span>⚪</span> <span>Contact / CTA Ready</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 pt-4 border-t border-neutral-800">
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-neutral-500">AI Recommendations for Growth:</div>
+                            <div id="li-recommendations" class="space-y-1.5 text-xs text-neutral-300">
+                                <p class="text-neutral-500 italic">Run audit to generate customized AI advice...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: AI MOCK INTERVIEW SIMULATOR -->
+            <div id="tab-content-interview" class="space-y-6 hidden pop-in-anim">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Setup / Controls Panel -->
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                                    <span>🎙️</span>
+                                    <span>AI Mock Interview Suite</span>
+                                </h3>
+                                <p class="text-xs text-neutral-400">Simulate real-world technical and HR interview rounds with AI evaluation.</p>
+                            </div>
+
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <label class="block text-neutral-400 font-semibold mb-1">Select Interview Domain</label>
+                                    <select id="interview-domain" class="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-orange-500">
+                                        <option value="tech">Technical & Coding Round</option>
+                                        <option value="hr">HR & Behavioral Round</option>
+                                        <option value="system">System Design & Architecture</option>
+                                        <option value="finance">Finance & Case Study Round</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-neutral-400 font-semibold mb-1">Experience Level</label>
+                                    <select id="interview-level" class="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-orange-500">
+                                        <option value="fresher">Fresher / Entry Level</option>
+                                        <option value="mid">Mid-Level (1-3 Years)</option>
+                                        <option value="senior">Senior / Lead (3+ Years)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="startMockInterview()" class="w-full py-3.5 gradient-btn text-black font-extrabold rounded-xl shadow-lg shadow-orange-500/20 text-xs">Start AI Interview Session 🚀</button>
+                    </div>
+
+                    <!-- Live Interview  Box -->
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="lg:col-span-2 rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+                        <div class="space-y-5">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping"></span>
+                                    <span class="text-xs font-bold text-white" id="interview-status-title">Interview Not Started</span>
+                                </div>
+                                <span id="interview-progress-pill" class="text-xs font-black px-3 py-1 rounded-full bg-neutral-900 text-neutral-400 border border-neutral-800">Q 0/5</span>
+                            </div>
+
+                            <!-- Question Display Box -->
+                            <div class="p-5 rounded-2xl bg-neutral-950/80 border border-neutral-800 space-y-3">
+                                <div class="text-[10px] uppercase font-bold text-orange-400 tracking-wider">AI Interviewer Question:</div>
+                                <p id="interview-question-text" class="text-xs sm:text-sm text-white font-medium leading-relaxed">Click 'Start AI Interview Session' on the left to begin your interactive mock interview simulation.</p>
+                            </div>
+
+                            <!-- Answer Input Box -->
+                            <div class="space-y-2">
+                                <label class="block text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Your Answer / Response:</label>
+                                <textarea id="interview-answer-input" rows="5" placeholder="Type your structured answer here (e.g. STAR method for behavioral, code logic/explanation for technical)..." class="w-full p-4 bg-neutral-950 border border-neutral-800 rounded-2xl text-xs text-white focus:outline-none focus:border-orange-500 resize-none font-mono" disabled></textarea>
+                            </div>
+
+                            <!-- Real-time AI Evaluation Feedback -->
+                            <div id="interview-feedback-box" class="hidden p-4 rounded-2xl bg-orange-500/10 border border-orange-500/20 space-y-1">
+                                <div class="text-xs font-bold text-orange-400 flex items-center justify-between">
+                                    <span>AI Evaluator Feedback:</span>
+                                    <span id="interview-score-badge" class="font-black">Score: --/10</span>
+                                </div>
+                                <p id="interview-feedback-text" class="text-xs text-neutral-300 leading-relaxed"></p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center space-x-3 pt-4 border-t border-neutral-800">
+                            <button id="submit-answer-btn" onclick="submitInterviewAnswer()" class="flex-grow py-3 gradient-btn text-black font-extrabold rounded-xl text-xs shadow-lg shadow-orange-500/20 opacity-50 cursor-not-allowed" disabled>Submit Answer & Get Feedback ⚡</button>
+                            <button id="next-question-btn" onclick="nextInterviewQuestion()" class="hidden py-3 px-6 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white font-bold rounded-xl text-xs transition">Next Question →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: SETTINGS / PROFILE -->
+            <div id="tab-content-settings" class="space-y-6 hidden pop-in-anim">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-8 space-y-6">
+                        <h3 class="text-lg font-bold text-white">Profile & Account Settings</h3>
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <label class="block text-neutral-400 font-semibold mb-1">Student Full Name</label>
+                                <input type="text" id="settings-name-input" class="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-orange-500">
+                            </div>
+                            <div>
+                                <label class="block text-neutral-400 font-semibold mb-1">Selected Academic Stream</label>
+                                <select id="settings-stream-select" class="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-xl text-white focus:outline-none focus:border-orange-500">
+                                    <option value="bca">BCA / Tech & IT Stream</option>
+                                    <option value="bcom">B.Com / Commerce & Finance Stream</option>
+                                    <option value="bba">BBA / Management & Strategy Stream</option>
+                                    <option value="bsc">BSc / Pure Sciences & Analytics Stream</option>
+                                    <option value="arts">Arts / Humanities & Creative Media Stream</option>
+                                    <option value="bvoc">B.Voc / Vocational & Technical Operations Stream</option>
+                                </select>
+                            </div>
+                            <button onclick="saveSettings()" class="w-full py-3 gradient-btn text-black font-extrabold rounded-xl shadow-lg shadow-orange-500/20">Save & Retrain Profile ✨</button>
+                        </div>
+                    </div>
+
+                    <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="rounded-3xl p-8 space-y-6 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <h3 class="text-lg font-bold text-white">Retake Assessment Quiz</h3>
+                            <p class="text-xs text-neutral-400 leading-relaxed">Want to change your core answers or re-evaluate your aptitude match? You can reset your quiz responses anytime.</p>
+                        </div>
+                        <button onclick="window.location.href='assessment.html'" class="w-full py-3 bg-neutral-900 border border-neutral-800 hover:border-orange-500/50 text-white font-bold rounded-xl transition text-xs">Retake Full Assessment 🔄</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JOB PORTAL INTEGRATION -->
+    <div id="job-apply-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 pop-in-anim">
+        <div class="bg-[#0c0c14] border border-orange-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-6 shadow-2xl relative">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl gradient-btn flex items-center justify-center text-black font-extrabold text-sm">💼</div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-white" id="modal-job-title">Job Title</h3>
+                        <p class="text-[11px] text-neutral-400">Quick-search openings on top recruitment networks</p>
+                    </div>
+                </div>
+                <button onclick="closeApplyModal()" class="text-neutral-400 hover:text-white p-1 text-sm font-bold">✕</button>
+            </div>
+
+            <div class="space-y-3">
+                <a id="portal-linkedin" href="#" target="_blank" class="flex items-center justify-between p-3.5 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-orange-500/50 transition group">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">🔗</span>
+                        <div>
+                            <div class="text-xs font-bold text-white group-hover:text-orange-400 transition">Apply on LinkedIn</div>
+                            <div class="text-[10px] text-neutral-400">Search live global & tech postings</div>
+                        </div>
+                    </div>
+                    <span class="text-xs text-orange-400 font-bold">Open →</span>
+                </a>
+
+                <a id="portal-indeed" href="#" target="_blank" class="flex items-center justify-between p-3.5 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-orange-500/50 transition group">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">🌐</span>
+                        <div>
+                            <div class="text-xs font-bold text-white group-hover:text-orange-400 transition">Apply on Indeed</div>
+                            <div class="text-[10px] text-neutral-400">Browse verified corporate openings</div>
+                        </div>
+                    </div>
+                    <span class="text-xs text-orange-400 font-bold">Open →</span>
+                </a>
+
+                <a id="portal-naukri" href="#" target="_blank" class="flex items-center justify-between p-3.5 rounded-2xl bg-neutral-900 border border-neutral-800 hover:border-orange-500/50 transition group">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">🇮🇳</span>
+                        <div>
+                            <div class="text-xs font-bold text-white group-hover:text-orange-400 transition">Apply on Naukri.com</div>
+                            <div class="text-[10px] text-neutral-400">Top Indian job market listings</div>
+                        </div>
+                    </div>
+                    <span class="text-xs text-orange-400 font-bold">Open →</span>
+                </a>
+            </div>
+
+            <div class="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-[11px] text-orange-300 flex items-center space-x-2">
+                <span>💡</span>
+                <span>Pro Tip: Verify your resume ATS score is above 80% before submitting applications!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING AI ASSISTANT WIDGET -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button id="ai-chat-toggle" onclick="toggleAIChat()" class="w-14 h-14 rounded-2xl gradient-btn flex items-center justify-center shadow-2xl shadow-orange-500/50 hover:scale-105 transition transform text-black">
+            <span class="text-2xl font-bold">🤖</span>
+        </button>
+
+        <div id="ai-chat-box" class="hidden absolute bottom-20 right-0 w-[350px] sm:w-[380px] bg-[#0c0c14] border border-orange-500/40 rounded-3xl shadow-2xl overflow-hidden flex flex-col z-50 pop-in-anim">
+            <div class="p-4 bg-neutral-950 border-b border-neutral-800 flex justify-between items-center">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-xl gradient-btn flex items-center justify-center text-black font-bold text-xs">AI</div>
+                    <div>
+                        <div class="text-xs font-extrabold text-white">Pathzo AI Assistant</div>
+                        <div class="text-[10px] text-emerald-400 flex items-center space-x-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>Ready to guide you</span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="toggleAIChat()" class="text-neutral-400 hover:text-white p-1">✕</button>
+            </div>
+
+            <div id="ai-chat-messages" class="p-4 h-[300px] overflow-y-auto space-y-3 text-xs text-neutral-300">
+                <div class="p-3 bg-neutral-900/80 rounded-2xl border border-neutral-800 max-w-[85%]">
+                    Hello! Main aapka Pathzo AI career mentor hoon. Aapko apne career match, roadmap ya skills se related koi bhi sawal poochna ho toh bejhijhak pooch sakte hain!
+                </div>
+            </div>
+
+            <div class="px-4 py-2 bg-neutral-950/60 border-t border-neutral-800/60 flex gap-1.5 overflow-x-auto text-[10px]">
+                <button onclick="sendPresetPrompt('How to start learning?')" class="px-2.5 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-orange-500 whitespace-nowrap">How to start?</button>
+                <button onclick="sendPresetPrompt('Best portfolio tips')" class="px-2.5 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-orange-500 whitespace-nowrap">Portfolio tips</button>
+                <button onclick="sendPresetPrompt('Salary expectations?')" class="px-2.5 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 hover:border-orange-500 whitespace-nowrap">Salary scale</button>
+            </div>
+
+            <div class="p-3 bg-neutral-950 border-t border-neutral-800 flex items-center space-x-2">
+                <input type="text" id="ai-chat-input" placeholder="Ask AI anything..." onkeypress="handleChatKeyPress(event)" class="flex-grow px-3.5 py-2.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white text-xs focus:outline-none focus:border-orange-500">
+                <button onclick="sendUserMessage()" class="px-3.5 py-2.5 gradient-btn text-black font-extrabold rounded-xl text-xs">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="fixed bottom-6 left-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-neutral-900 border border-orange-500/35 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs font-semibold">
+        <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
+        <span id="toast-msg">Action completed successfully!</span>
+    </div>
+
+    <!-- js scripts -->
+    <script>
+        const dashboardData = {
+            bca: {
+                streamName: "BCA / Tech & IT Stream",
+                topMatch: "Senior Frontend & UI Architect",
+                matchScore: "97%",
+                description: "Your responses indicate strong component-level design thinking and heavy affinity toward responsive UI frameworks.",
+                keywords: ["react", "javascript", "tailwind", "next.js", "git", "api", "css", "html", "typescript", "state management"],
+                careers: [
+                    { title: "Senior Frontend Engineer", match: "97%", type: "High Growth", desc: "Build interactive web architectures using React, Tailwind & Next.js.", salary: "₹12 - 18 LPA", link: "https://roadmap.sh/frontend" },
+                    { title: "Full-Stack System Developer", match: "91%", type: "Core Tech", desc: "Manage complete server-side logic, database optimization, and APIs.", salary: "₹14 - 22 LPA", link: "https://roadmap.sh/full-stack" },
+                    { title: "AI/ML Integration Engineer", match: "86%", type: "Innovation", desc: "Deploy intelligent LLM wrapper apps and smart data pipelines.", salary: "₹16 - 25 LPA", link: "https://roadmap.sh/ai-data-scientist" }
+                ],
+                roadmap: [
+                    { phase: "Phase 1 (Days 1-30)", title: "Master Core Stack", desc: "Deep dive into advanced JavaScript, React state management, and Tailwind CSS systems.", tasks: ["Complete Advanced JS modules", "Build 5 responsive layouts", "Master Tailwind CSS setup"] },
+                    { phase: "Phase 2 (Days 31-60)", title: "Build 3 Live Projects", desc: "Develop a SaaS dashboard, an e-commerce platform, and a real-time API-driven app.", tasks: ["Build SaaS Dashboard UI", "Implement E-commerce Cart", "Integrate external REST APIs"] },
+                    { phase: "Phase 3 (Days 61-90)", title: "Portfolio & Deployment", desc: "Optimize GitHub repositories, write technical case studies, and apply for targeted internships.", tasks: ["Clean up GitHub READMEs", "Deploy apps on Vercel/Netlify", "Apply to 15 target tech firms"] }
+                ]
+            },
+            bcom: {
+                streamName: "B.Com / Commerce & Finance Stream",
+                topMatch: "Investment Analyst & Corporate Tax Consultant",
+                matchScore: "95%",
+                description: "Your profile reflects strong numerical aptitude and analytical capabilities suited for financial reporting and auditing.",
+                keywords: ["excel", "valuation", "tally", "taxation", "auditing", "financial modeling", "cfa", "accounting", "balance sheet", "gst"],
+                careers: [
+                    { title: "Investment Banking Analyst", match: "95%", type: "High Growth", desc: "Analyze high-risk portfolios, market trends, and corporate valuations.", salary: "₹10 - 16 LPA", link: "https://www.cfainstitute.org/" },
+                    { title: "Senior Tax Consultant", match: "90%", type: "Compliance", desc: "Manage corporate auditing frameworks, tax filings, and regulatory compliance.", salary: "₹8 - 14 LPA", link: "https://www.investopedia.com/financial-advisor-4427710" },
+                    { title: "FinTech Product Strategist", match: "85%", type: "Innovation", desc: "Blend financial systems with modern digital consumer analytics.", salary: "₹12 - 20 LPA", link: "https://roadmap.sh/" }
+                ],
+                roadmap: [
+                    { phase: "Phase 1 (Days 1-30)", title: "Advanced Financial Modeling", desc: "Master Excel, financial statement analysis, and valuation metrics.", tasks: ["Complete Advanced Excel course", "Practice DCF valuation models", "Learn financial ratios"] },
+                    { phase: "Phase 2 (Days 31-60)", title: "Certification & Tools", desc: "Gain certifications in Tally ERP, Bloomberg terminals, or tax portals.", tasks: ["Obtain Tally ERP certification", "Analyze stock portfolios", "Study tax compliance laws"] },
+                    { phase: "Phase 3 (Days 61-90)", title: "Corporate Networking", desc: "Build LinkedIn authority, connect with auditors, and secure financial analyst roles.", tasks: ["Optimize LinkedIn finance profile", "Connect with 20 alumni analysts", "Apply for financial analyst roles"] }
+                ]
+            },
+            bba: {
+                streamName: "BBA / Management & Strategy Stream",
+                topMatch: "Strategic Brand & Operations Manager",
+                matchScore: "96%",
+                description: "Your choices highlight exceptional leadership potential, project coordination skills, and corporate vision.",
+                keywords: ["crm", "leadership", "market research", "strategy", "sales", "analytics", "business development", "negotiation", "operations", "roi"],
+                careers: [
+                    { title: "Strategic Brand Manager", match: "96%", type: "Leadership", desc: "Drive consumer psychology, product marketing campaigns, and brand growth.", salary: "₹12 - 19 LPA", link: "https://roadmap.sh/marketing" },
+                    { title: "Corporate Operations Head", match: "91%", type: "Efficiency", desc: "Streamline workflows, manage supply chains, and optimize organizational output.", salary: "₹10 - 17 LPA", link: "https://roadmap.sh/" },
+                    { title: "Business Development Lead", match: "88%", type: "Sales", desc: "Handle high-value enterprise client pitching and corporate partnerships.", salary: "₹11 - 18 LPA", link: "https://roadmap.sh/" }
+                ],
+                roadmap: [
+                    { phase: "Phase 1 (Days 1-30)", title: "Market Research & CRM", desc: "Learn advanced CRM tools, consumer analytics, and campaign ROI calculation.", tasks: ["Master HubSpot or Salesforce CRM", "Analyze marketing case studies", "Study consumer behavior metrics"] },
+                    { phase: "Phase 2 (Days 31-60)", title: "Case Study Execution", desc: "Solve real corporate business case studies and manage mock team sprints.", tasks: ["Complete 3 Harvard business cases", "Lead a mock team project", "Draft growth marketing strategy"] },
+                    { phase: "Phase 3 (Days 61-90)", title: "Executive Positioning", desc: "Refine executive resume, build leadership portfolio, and target management trainee tracks.", tasks: ["Refine executive resume", "Build management portfolio", "Pitch to startup accelerators"] }
+                ]
+            },
+            bsc: {
+                streamName: "BSc / Pure Sciences & Analytics Stream",
+                topMatch: "Senior Data Scientist & Research Specialist",
+                matchScore: "94%",
+                description: "Your analytical approach and experimental mindset make you ideal for data-driven scientific and tech roles.",
+                keywords: ["python", "sql", "pandas", "machine learning", "statistics", "data visualization", "r", "modeling", "numpy", "research"],
+                careers: [
+                    { title: "Senior Data Scientist", match: "94%", type: "High Growth", desc: "Build predictive machine learning models and statistical data pipelines.", salary: "₹14 - 24 LPA", link: "https://roadmap.sh/ai-data-scientist" },
+                    { title: "Biotech Research Specialist", match: "89%", type: "R&D", desc: "Conduct advanced life sciences and pharmaceutical research operations.", salary: "₹9 - 15 LPA", link: "https://www.biotech-career.org/" },
+                    { title: "Sustainability Analyst", match: "84%", type: "Green Tech", desc: "Evaluate environmental policy data and green tech metrics.", salary: "₹8 - 14 LPA", link: "https://roadmap.sh/" }
+                ],
+                roadmap: [
+                    { phase: "Phase 1 (Days 1-30)", title: "Statistical Programming", desc: "Master Python, SQL, and data visualization libraries (Pandas/Seaborn).", tasks: ["Learn Python fundamentals", "Practice SQL joins & queries", "Build data visualization charts"] },
+                    { phase: "Phase 2 (Days 31-60)", title: "Machine Learning Models", desc: "Implement regression models, classification algorithms, and test datasets.", tasks: ["Build Linear Regression models", "Test classification metrics", "Clean unstructured datasets"] },
+                    { phase: "Phase 3 (Days 61-90)", title: "Research Portfolio", desc: "Publish data analysis projects on GitHub/Kaggle and apply to analytics firms.", tasks: ["Upload 2 Kaggle notebooks", "Write research summary", "Apply to analytics firms"] }
+                ]
+            },
+            arts: {
+                streamName: "Arts / Humanities & Creative Media Stream",
+                topMatch: "Lead UX Researcher & Content Strategist",
+                matchScore: "95%",
+                description: "Your creative strengths and user psychology alignment position you perfectly for modern product design and media.",
+                keywords: ["figma", "ux research", "wireframing", "copywriting", "user interviews", "storytelling", "branding", "prototyping", "empathy", "design thinking"],
+                careers: [
+                    { title: "Lead UX Researcher & Designer", match: "95%", type: "Product Design", desc: "Conduct empathetic user interviews and design seamless interaction workflows.", salary: "₹11 - 18 LPA", link: "https://roadmap.sh/ux-design" },
+                    { title: "Head Content Strategist", match: "90%", type: "Media", desc: "Manage digital editorial pipelines, copywriting, and brand storytelling.", salary: "₹9 - 15 LPA", link: "https://roadmap.sh/" },
+                    { title: "Creative Brand Director", match: "86%", type: "Branding", desc: "Direct visual campaigns, typography systems, and multimedia publishing.", salary: "₹12 - 20 LPA", link: "https://roadmap.sh/" }
+                ],
+                roadmap: [
+                    { phase: "Phase 1 (Days 1-30)", title: "UX & Content Frameworks", desc: "Learn Figma, wireframing methodologies, and user psychology principles.", tasks: ["Complete Figma fundamentals course", "Draw 10 mobile wireframes", "Study user psychology principles"] },
+                    { phase: "Phase 2 (Days 31-60)", title: "Case Study Creation", desc: "Design 2 comprehensive case studies detailing user problem solving.", tasks: ["Conduct 3 mock user interviews", "Design high-fidelity UI screens", "Write UX case study on Medium"] },
+                    { phase: "Phase 3 (Days 61-90)", title: "Design Portfolio", desc: "Publish case studies on Behance/Medium and pitch to product design studios.", tasks: ["Publish Behance portfolio", "Network with design leads", "Pitch to product studios"] }
+                ]
+            },
+            bvoc: {
+                streamName: "B.Voc / Vocational & Technical Operations Stream",
+                topMatch: "Technical Operations & Network Lead",
+                matchScore: "93%",
+                description: "Your practical hands-on mindset and technical troubleshooting skills make you vital for infrastructure and supply chains.",
+                keywords: ["ccnx", "networking", "troubleshooting", "hardware", "supply chain", "logistics", "servers", "infrastructure", "security", "operations"],
+                careers: [
+                    { title: "Network Administrator / IT Lead", match: "93%", type: "Infrastructure", desc: "Manage physical servers, secure LAN setups, and enterprise IT hardware.", salary: "₹8 - 14 LPA", link: "https://roadmap.sh/devops" },
+                    { title: "Supply Chain Manager", match: "88%", type: "Operations", desc: "Optimize warehouse logistics, inventory workflows, and transport routes.", salary: "₹9 - 16 LPA", link: "https://roadmap.sh/" },
+                    { title: "Senior Multimedia Producer", match: "85%", type: "Media Tech", desc: "Direct technical broadcast operations, post-processing, and hardware suites.", salary: "₹8 - 13 LPA", link: "https://roadmap.sh/" }
+                ],
+                roadmap: [
+                    { phase: "Phase 1 (Days 1-30)", title: "Technical Certifications", desc: "Pursue CCNA, CompTIA Network+, or advanced operations badges.", tasks: ["Study CCNA networking modules", "Simulate router setups", "Prepare for CompTIA exam"] },
+                    { phase: "Phase 2 (Days 31-60)", title: "Hands-On Diagnostics", desc: "Simulate complex network troubleshooting and inventory workflow audits.", tasks: ["Run network diagnostic drills", "Audit supply chain inventory", "Practice server hardening"] },
+                    { phase: "Phase 3 (Days 61-90)", title: "Industry Deployment", desc: "Connect with infrastructure managers and secure operations technician roles.", tasks: ["Update technical CV", "Connect with IT infrastructure heads", "Secure operations interviews"] }
+                ]
+            }
+        };
+
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            ['overview', 'careers', 'roadmap', 'resume', 'linkedin', 'interview', 'settings'].forEach(tab => {
+                const content = document.getElementById(`tab-content-${tab}`);
+                const navBtn = document.getElementById(`nav-${tab}`);
+                if (content) content.classList.add('hidden');
+                if (navBtn) navBtn.classList.remove('nav-item-active');
+            });
+
+            document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) activeNav.classList.add('nav-item-active');
+
+            const titles = {
+                overview: "Dashboard Overview",
+                careers: "Career Pathways",
+                roadmap: "90-Day Action Roadmap",
+                resume: "AI ATS Resume Scanner",
+                linkedin: "LinkedIn & Portfolio Audit",
+                interview: "AI Mock Interview Simulator",
+                settings: "Profile & Settings"
+            };
+            document.getElementById('current-page-title').innerText = titles[tabName];
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('pathzo_username');
+            localStorage.removeItem('pathzo_stream');
+            localStorage.removeItem('pathzo_roadmap_progress');
+            window.location.href = 'index.html';
+        }
+
+        function downloadPDFReport() {
+            window.print();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2500);
+        }
+
+        function saveSettings() {
+            const newName = document.getElementById('settings-name-input').value;
+            const newStream = document.getElementById('settings-stream-select').value;
+            
+            localStorage.setItem('pathzo_username', newName);
+            localStorage.setItem('pathzo_stream', newStream);
+
+            document.getElementById('sidebar-student-name').innerText = newName;
+            document.getElementById('mobile-user-display').innerText = newName;
+            document.getElementById('user-avatar-initial').innerText = newName.charAt(0).toUpperCase();
+
+            loadDashboardData(newStream);
+            showToast("Profile and stream updated successfully! ✨");
+        }
+
+        // JOB PORTAL MODAL HANDLERS
+        function openApplyModal(jobTitle) {
+            document.getElementById('modal-job-title').innerText = jobTitle;
+            const encodedQuery = encodeURIComponent(jobTitle);
+            
+            document.getElementById('portal-linkedin').href = `https://www.linkedin.com/jobs/search/?keywords=${encodedQuery}`;
+            document.getElementById('portal-indeed').href = `https://www.indeed.com/jobs?q=${encodedQuery}`;
+            document.getElementById('portal-naukri').href = `https://www.naukri.com/${encodedQuery.toLowerCase().replace(/%20/g, '-')}-jobs`;
+            
+            document.getElementById('job-apply-modal').classList.remove('hidden');
+        }
+
+        function closeApplyModal() {
+            document.getElementById('job-apply-modal').classList.add('hidden');
+        }
+
+        // AI ATS RESUME SCANNER ENGINE
+        function scanResumeATS() {
+            const rawText = document.getElementById('resume-text-input').value;
+            const resumeText = rawText.toLowerCase();
+            const currentStream = localStorage.getItem('pathzo_stream') || 'bca';
+            const data = dashboardData[currentStream];
+
+            if (!resumeText.trim() || resumeText.length < 50) {
+                showToast("Please paste a complete resume text (at least 50 characters)!");
+                return;
+            }
+
+            // 1. SECTION AUDIT CHECKS
+            const hasExperience = /experience|work history|employment|internship/i.test(resumeText);
+            const hasEducation = /education|university|college|degree|graduat/i.test(resumeText);
+            const hasSkills = /skills|technologies|proficiencies|expertise|tools/i.test(resumeText);
+            const hasMetrics = /\d+%|\d+ lpa|\d+x|\$\d+|\₹\d+|\b\d{1,3}\b/i.test(resumeText);
+
+            updateAuditBadge('audit-sec-experience', hasExperience, 'Experience Section');
+            updateAuditBadge('audit-sec-education', hasEducation, 'Education Section');
+            updateAuditBadge('audit-sec-skills', hasSkills, 'Skills Section');
+            updateAuditBadge('audit-sec-metrics', hasMetrics, 'Metrics & Numbers');
+
+            // 2. KEYWORD MATCHING
+            let foundCount = 0;
+            let missingKeywords = [];
+
+            data.keywords.forEach(keyword => {
+                const kwRegex = new RegExp(`\\b${keyword}\\b`, 'i');
+                if (kwRegex.test(resumeText) || resumeText.includes(keyword)) {
+                    foundCount++;
+                } else {
+                    missingKeywords.push(keyword);
+                }
+            });
+
+            // 3. WEIGHTED AI SCORE CALCULATION
+            const keywordScore = (foundCount / data.keywords.length) * 50;
+            
+            let sectionScore = 0;
+            if (hasExperience) sectionScore += 10;
+            if (hasEducation) sectionScore += 10;
+            if (hasSkills) sectionScore += 10;
+
+            let metricScore = hasMetrics ? 20 : 5;
+
+            let finalScore = Math.round(keywordScore + sectionScore + metricScore);
+            if (finalScore > 98) finalScore = 98;
+            if (finalScore < 35) finalScore = 35;
+
+            document.getElementById('ats-score-num').innerText = finalScore + '%';
+
+            // 4. FEEDBACK & PILL UPDATES
+            const pill = document.getElementById('ats-score-pill');
+            const feedback = document.getElementById('ats-feedback-text');
+
+            if (finalScore >= 80) {
+                pill.className = "text-xs font-black px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                pill.innerText = "Elite ATS Ready 🚀";
+                feedback.innerText = "Fantastic resume structure! Your file clears semantic ATS parsing with strong domain keywords and section formatting.";
+            } else if (finalScore >= 60) {
+                pill.className = "text-xs font-black px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                pill.innerText = "Competitive Match ⚡";
+                feedback.innerText = "Good foundation, but your resume lacks some target keywords or quantified impact numbers. Review the suggestions below.";
+            } else {
+                pill.className = "text-xs font-black px-3.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20";
+                pill.innerText = "High Risk / Needs Fixing ⚠️";
+                feedback.innerText = "Your resume is missing key sections or essential domain keywords. Automated ATS bots will likely filter this out.";
+            }
+
+            // 5. MISSING KEYWORDS CHIPS
+            const missingContainer = document.getElementById('ats-missing-keywords');
+            missingContainer.innerHTML = '';
+            if (missingKeywords.length === 0) {
+                missingContainer.innerHTML = '<span class="text-emerald-400 text-xs font-bold">All core domain keywords successfully detected! 🎉</span>';
+            } else {
+                missingKeywords.forEach(kw => {
+                    missingContainer.innerHTML += `<span class="px-2.5 py-1 rounded-lg bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[11px] font-semibold capitalize">+ ${kw}</span>`;
+                });
+            }
+
+            showToast("AI ATS Deep Scan Completed Successfully! ⚡");
+        }
+
+        // ONE-CLICK LINKEDIN & PORTFOLIO REVIEWER ENGINE 
+        function scanLinkedInPortfolio() {
+            const headline = document.getElementById('li-headline-input').value.trim();
+            const summary = document.getElementById('li-summary-input').value.trim();
+            const portfolio = document.getElementById('li-portfolio-input').value.trim();
+
+            if (!headline && !summary) {
+                showToast("Please provide at least your LinkedIn headline or summary!");
+                return;
+            }
+
+            const hasGoodHeadline = headline.length > 15 && (/developer|analyst|manager|engineer|expert|consultant|student/i.test(headline));
+            const hasGoodSummary = summary.length > 30;
+            const hasPortfolioLink = /http|www|\.com|\.me|\.dev|github/i.test(portfolio);
+            const hasCTA = /contact|reach out|hire|email|open for/i.test(summary) || /contact|reach out|hire/i.test(headline);
+
+            updateAuditBadge('li-audit-headline', hasGoodHeadline, 'Headline Keywords');
+            updateAuditBadge('li-audit-summary', hasGoodSummary, 'Summary Storytelling');
+            updateAuditBadge('li-audit-portfolio', hasPortfolioLink, 'Portfolio Link Attached');
+            updateAuditBadge('li-audit-cta', hasCTA, 'Contact / CTA Ready');
+
+            let score = 40;
+            if (hasGoodHeadline) score += 25;
+            if (hasGoodSummary) score += 20;
+            if (hasPortfolioLink) score += 10;
+            if (hasCTA) score += 5;
+            if (score > 98) score = 98;
+
+            document.getElementById('li-score-num').innerText = score + '%';
+
+            const pill = document.getElementById('li-score-pill');
+            const feedback = document.getElementById('li-feedback-text');
+
+            if (score >= 80) {
+                pill.className = "text-xs font-black px-3.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                pill.innerText = "Recruiter Magnet 🚀";
+                feedback.innerText = "Outstanding LinkedIn profile structure! Your headline and summary have strong discoverability keywords.";
+            } else if (score >= 60) {
+                pill.className = "text-xs font-black px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                pill.innerText = "Good Visibility ⚡";
+                feedback.innerText = "Decent profile setup. Enhance your headline with specific tech stacks or role titles to rank higher in recruiter searches.";
+            } else {
+                pill.className = "text-xs font-black px-3.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20";
+                pill.innerText = "Needs Optimization ⚠️";
+                feedback.innerText = "Your headline or summary is too generic. Recruiters may skip your profile due to lack of clear domain keywords.";
+            }
+
+            const recsContainer = document.getElementById('li-recommendations');
+            recsContainer.innerHTML = '';
+            
+            let recs = [];
+            if (!hasGoodHeadline) recs.push("💡 Add your specific core role and 2-3 key skills in your LinkedIn headline (e.g. 'Frontend Developer | React | Tailwind').");
+            if (!hasGoodSummary) recs.push("💡 Expand your summary section to include your background, passion, and what kind of roles you are targeting.");
+            if (!hasPortfolioLink) recs.push("💡 Include a live working portfolio or GitHub link in your featured section or summary.");
+            if (!hasCTA) recs.push("💡 Add a clear Call-to-Action (e.g., 'Open for opportunities - reach out at email@domain.com').");
+            if (recs.length === 0) recs.push("🎉 Your LinkedIn profile and portfolio presentation look exceptionally optimized!");
+
+            recs.forEach(rec => {
+                recsContainer.innerHTML += `<div class="p-2.5 rounded-xl bg-neutral-950/60 border border-neutral-800 text-neutral-300">${rec}</div>`;
+            });
+
+            showToast("LinkedIn & Portfolio Audit Completed! ⚡");
+        }
+
+        function updateAuditBadge(elementId, isPassed, labelName) {
+            const el = document.getElementById(elementId);
+            if (isPassed) {
+                el.className = "p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center space-x-2 text-emerald-400 font-semibold";
+                el.innerHTML = `<span>✅</span> <span>${labelName}</span>`;
+            } else {
+                el.className = "p-2 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center space-x-2 text-red-400 font-semibold";
+                el.innerHTML = `<span>❌</span> <span>${labelName}</span>`;
+            }
+        }
+
+        // AI MOCK INTERVIEW LOGIC
+        let interviewState = {
+            active: false,
+            domain: 'tech',
+            level: 'fresher',
+            currentQIndex: 0,
+            questions: [],
+            scores: []
+        };
+
+        const interviewQuestionBank = {
+            tech: [
+                "Explain the difference between useEffect and useMemo in React with a practical use case.",
+                "How does JavaScript handle asynchronous operations under the hood? Explain Event Loop.",
+                "What are CSS custom properties and how do they improve design scalability?",
+                "Describe how you would optimize a web application loading time from 4 seconds to under 1 second.",
+                "Explain RESTful API best practices regarding status codes, endpoints, and versioning."
+            ],
+            hr: [
+                "Tell me about a time you faced a major conflict in a team project and how you resolved it.",
+                "Why do you want to pursue this specific career path, and what motivates you daily?",
+                "Describe a situation where you had to meet a tight deadline under immense pressure.",
+                "What are your greatest professional strengths and one area you are actively improving?",
+                "Where do you see your career growth and leadership trajectory over the next 3 years?"
+            ],
+            system: [
+                "How would you design a scalable URL shortener like Bitly handling 100M requests daily?",
+                "Explain the trade-offs between SQL (Relational) and NoSQL (Non-Relational) databases.",
+                "What is Load Balancing and what algorithms are commonly used across distributed systems?",
+                "How do you implement caching strategies (Redis/Memcached) to reduce database load?",
+                "Explain microservices architecture versus monolithic architecture, pros and cons."
+            ],
+            finance: [
+                "Walk me through the three main financial statements and how they connect together.",
+                "How does a $10 depreciation in equipment affect the Income Statement, Balance Sheet, and Cash Flow Statement?",
+                "Explain Discounted Cash Flow (DCF) valuation and the significance of WACC.",
+                "How would you analyze the financial health and liquidity of a high-growth tech startup?",
+                "What factors influence corporate capital budgeting and investment decisions?"
+            ]
+        };
+
+        function startMockInterview() {
+            const domain = document.getElementById('interview-domain').value;
+            const level = document.getElementById('interview-level').value;
+            
+            interviewState.active = true;
+            interviewState.domain = domain;
+            interviewState.level = level;
+            interviewState.currentQIndex = 0;
+            interviewState.questions = interviewQuestionBank[domain] || interviewQuestionBank.tech;
+            interviewState.scores = [];
+
+            document.getElementById('interview-status-title').innerText = "Live AI Mock Interview in Progress";
+            document.getElementById('interview-answer-input').disabled = false;
+            document.getElementById('interview-answer-input').value = '';
+            document.getElementById('submit-answer-btn').disabled = false;
+            document.getElementById('submit-answer-btn').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('interview-feedback-box').classList.add('hidden');
+            document.getElementById('next-question-btn').classList.add('hidden');
+
+            loadInterviewQuestion();
+            showToast("AI Mock Interview started! Answer the first question. 🎙️");
+        }
+
+        function loadInterviewQuestion() {
+            const qIdx = interviewState.currentQIndex;
+            const totalQ = interviewState.questions.length;
+
+            if (qIdx >= totalQ) {
+                finishMockInterview();
+                return;
+            }
+
+            document.getElementById('interview-progress-pill').innerText = `Q ${qIdx + 1}/${totalQ}`;
+            document.getElementById('interview-question-text').innerText = interviewState.questions[qIdx];
+            document.getElementById('interview-answer-input').value = '';
+            document.getElementById('interview-feedback-box').classList.add('hidden');
+            document.getElementById('submit-answer-btn').classList.remove('hidden');
+            document.getElementById('next-question-btn').classList.add('hidden');
+        }
+
+        function submitInterviewAnswer() {
+            const answerText = document.getElementById('interview-answer-input').value.trim();
+            if (!answerText || answerText.length < 15) {
+                showToast("Please provide a more detailed answer (at least 15 characters)!");
+                return;
+            }
+
+            let score = Math.floor(Math.random() * 3) + 8; // 8 to 10
+            if (answerText.length < 40) score = Math.floor(Math.random() * 2) + 6; // 6 to 7
+            
+            interviewState.scores.push(score);
+
+            const feedbackBox = document.getElementById('interview-feedback-box');
+            const scoreBadge = document.getElementById('interview-score-badge');
+            const feedbackText = document.getElementById('interview-feedback-text');
+
+            scoreBadge.innerText = `Score: ${score}/10`;
+            if (score >= 8) {
+                feedbackText.innerText = "Excellent structured answer! You covered the core concepts thoroughly with professional articulation.";
+            } else {
+                feedbackText.innerText = "Good attempt, but adding more concrete examples, technical depth, or structured frameworks (like STAR) will improve your impact.";
+            }
+
+            feedbackBox.classList.remove('hidden');
+            document.getElementById('submit-answer-btn').classList.add('hidden');
+            document.getElementById('next-question-btn').classList.remove('hidden');
+
+            showToast(`Question ${interviewState.currentQIndex + 1} evaluated successfully! ⚡`);
+        }
+
+        function nextInterviewQuestion() {
+            interviewState.currentQIndex++;
+            loadInterviewQuestion();
+        }
+
+        function finishMockInterview() {
+            const avgScore = interviewState.scores.length > 0 ? (interviewState.scores.reduce((a, b) => a + b, 0) / interviewState.scores.length).toFixed(1) : 0;
+            
+            document.getElementById('interview-status-title').innerText = "Mock Interview Completed 🎉";
+            document.getElementById('interview-progress-pill').innerText = "Finished";
+            document.getElementById('interview-question-text').innerHTML = `
+                <div class="space-y-2">
+                    <div class="text-base font-extrabold text-white">Interview Session Successfully Completed!</div>
+                    <p class="text-xs text-neutral-300">Overall Evaluated Average Score: <strong class="text-orange-400 text-sm">${avgScore}/10</strong></p>
+                    <p class="text-[11px] text-neutral-400">Review your feedback across all rounds and practice again anytime to sharpen your interviewing skills.</p>
+                </div>
+            `;
+            document.getElementById('interview-answer-input').value = '';
+            document.getElementById('interview-answer-input').disabled = true;
+            document.getElementById('submit-answer-btn').classList.add('hidden');
+            document.getElementById('next-question-btn').classList.add('hidden');
+            document.getElementById('interview-feedback-box').classList.add('hidden');
+
+            showToast("Mock Interview completed! Check your final performance score. 🚀");
+        }
+
+        // Roadmap Progress Tracker Logic
+        function handleTaskToggle() {
+            const checkboxes = document.querySelectorAll('.roadmap-checkbox');
+            let totalTasks = checkboxes.length;
+            let checkedTasks = 0;
+            let savedProgress = {};
+
+            checkboxes.forEach((cb, index) => {
+                if (cb.checked) {
+                    checkedTasks++;
+                }
+                savedProgress[index] = cb.checked;
+            });
+
+            localStorage.setItem('pathzo_roadmap_progress', JSON.stringify(savedProgress));
+
+            const percent = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
+            document.getElementById('roadmap-progress-bar').style.width = percent + '%';
+            document.getElementById('roadmap-progress-text').innerText = percent + '% Completed';
+        }
+
+        // AI Chatbot Logic
+        function toggleAIChat() {
+            const chatBox = document.getElementById('ai-chat-box');
+            chatBox.classList.toggle('hidden');
+        }
+
+        function sendPresetPrompt(promptText) {
+            document.getElementById('ai-chat-input').value = promptText;
+            sendUserMessage();
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendUserMessage();
+            }
+        }
+
+        function sendUserMessage() {
+            const inputField = document.getElementById('ai-chat-input');
+            const msg = inputField.value.trim();
+            if (!msg) return;
+
+            const chatMessages = document.getElementById('ai-chat-messages');
+            chatMessages.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="p-3 bg-orange-500/20 border border-orange-500/30 rounded-2xl max-w-[85%] text-white">
+                        ${msg}
+                    </div>
+                </div>
+            `;
+            inputField.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            setTimeout(() => {
+                let aiReply = "Aapke is sawaal ke liye main recommend karunga ki aap apne 90-day roadmap ke phases ko strictly follow karein aur GitHub/Portfolio par projects build karein.";
+                const lowerMsg = msg.toLowerCase();
+                if (lowerMsg.includes('start') || lowerMsg.includes('begin')) {
+                    aiReply = "Shuruat karne ke liye sabse pehle core fundamentals strong karein aur weekly 1 mini-project complete karein!";
+                } else if (lowerMsg.includes('portfolio') || lowerMsg.includes('tips')) {
+                    aiReply = "Apne portfolio mein kam se kam 3 live working projects showcase karein, jinke sath clean case studies attached ho.";
+                } else if (lowerMsg.includes('salary') || lowerMsg.includes('package')) {
+                    aiReply = "Aapke top career track mein average package ₹12 - ₹18 LPA ke beech range karta hai, jo skills aur interview performance par depend karta hai.";
+                }
+
+                chatMessages.innerHTML += `
+                    <div class="p-3 bg-neutral-900/80 rounded-2xl border border-neutral-800 max-w-[85%]">
+                        ${aiReply}
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 600);
+        }
+
+        function loadDashboardData(stream) {
+            const data = dashboardData[stream] || dashboardData.bca;
+            const userName = localStorage.getItem('pathzo_username') || "Student";
+
+            document.getElementById('sidebar-student-name').innerText = userName;
+            document.getElementById('mobile-user-display').innerText = userName;
+            document.getElementById('user-avatar-initial').innerText = userName.charAt(0).toUpperCase();
+            document.getElementById('settings-name-input').value = userName;
+            document.getElementById('settings-stream-select').value = stream;
+
+            document.getElementById('report-stream-tag').innerText = `Analysis Report • ${data.streamName}`;
+            document.getElementById('main-career-title').innerHTML = `Your Top Career Match is <span class="gradient-text">${data.topMatch}</span>`;
+            document.getElementById('main-career-desc').innerText = data.description;
+            document.getElementById('match-score-badge').innerText = data.matchScore;
+
+            // Render Careers Grid with Direct Quick-Apply Integration
+            const careersGrid = document.getElementById('careers-grid');
+            careersGrid.innerHTML = '';
+            data.careers.forEach((career, idx) => {
+                const cardClass = idx === 0 ? 'featured-card rounded-3xl p-6 relative flex flex-col justify-between' : 'standard-card rounded-3xl p-6 relative flex flex-col justify-between';
+                careersGrid.innerHTML += `
+                    <div class="${cardClass}">
+                        ${idx === 0 ? '<div class="absolute top-0 right-0 bg-gradient-to-l from-orange-500 to-amber-500 text-black text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase">Top Pick</div>' : ''}
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-start">
+                                <span class="px-3 py-1 rounded-full border bg-orange-500/20 border-orange-500/30 text-orange-400 text-xs font-bold">${career.match} Match</span>
+                                <span class="text-xs font-semibold text-neutral-400">${career.type}</span>
+                            </div>
+                            <h3 class="text-base font-bold text-white">${career.title}</h3>
+                            <p class="text-xs text-neutral-400 leading-relaxed">${career.desc}</p>
+                        </div>
+                        <div class="space-y-3 mt-4">
+                            <div class="flex justify-between items-center text-xs text-neutral-400 pt-3 border-t border-neutral-800">
+                                <span>Package: <strong class="text-white">${career.salary}</strong></span>
+                                <a href="${career.link}" target="_blank" class="text-neutral-400 hover:text-white transition font-semibold">Roadmap ↗</a>
+                            </div>
+                            <button onclick="openApplyModal('${career.title}')" class="w-full py-2.5 gradient-btn text-black font-extrabold rounded-xl shadow-lg shadow-orange-500/20 text-xs flex items-center justify-center space-x-1.5">
+                                <span>Quick Apply / Search</span>
+                                <span>🚀</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Render Interactive Roadmap with Checkboxes
+            const roadmapContainer = document.getElementById('roadmap-container');
+            roadmapContainer.innerHTML = '';
+            
+            let globalTaskCounter = 0;
+            const savedProgress = JSON.parse(localStorage.getItem('pathzo_roadmap_progress') || '{}');
+
+            data.roadmap.forEach((step) => {
+                let tasksHtml = '';
+                step.tasks.forEach((task) => {
+                    const currentId = globalTaskCounter++;
+                    const isChecked = savedProgress[currentId] ? 'checked' : '';
+                    tasksHtml += `
+                        <label class="flex items-center space-x-2.5 cursor-pointer bg-neutral-900/50 p-2.5 rounded-xl border border-neutral-800 hover:border-orange-500/40 transition">
+                            <input type="checkbox" class="roadmap-checkbox w-4 h-4 rounded accent-orange-500" ${isChecked} onchange="handleTaskToggle()">
+                            <span class="text-neutral-300 text-xs">${task}</span>
+                        </label>
+                    `;
+                });
+
+                roadmapContainer.innerHTML += `
+                    <div class="p-6 rounded-2xl bg-neutral-950/70 border border-neutral-800 space-y-4 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-black text-orange-400 bg-orange-500/10 px-2.5 py-1 rounded-md border border-orange-500/20">${step.phase}</span>
+                            </div>
+                            <div class="text-sm font-bold text-white">${step.title}</div>
+                            <p class="text-neutral-400 text-xs leading-relaxed">${step.desc}</p>
+                        </div>
+                        <div class="space-y-2 pt-2 border-t border-neutral-800/80">
+                            <div class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider">Action Checkpoints:</div>
+                            ${tasksHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            handleTaskToggle();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const stream = localStorage.getItem('pathzo_stream') || 'bca';
+            loadDashboardData(stream);
+        });
+
+        window.addEventListener('load', () => {
+            const loaderBar = document.getElementById('loader-bar');
+            const loader = document.getElementById('ai-loader');
+            setTimeout(() => { loaderBar.style.width = '70%'; }, 200);
+            setTimeout(() => { loaderBar.style.width = '100%'; }, 800);
+            setTimeout(() => { loader.classList.add('opacity-0', 'pointer-events-none'); }, 1200);
+        });
+    </script>
+</body>
+</html>
