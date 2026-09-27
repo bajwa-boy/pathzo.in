@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pathzo - Next-Gen Career Discovery</title>
+    <title>Pathzo - Advanced Career Assessment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!--MASTER COLOR PALETTE -->
     <style>
         :root {
             --bg-main: #050505;
             --accent-primary: #f97316;
-            --accent-secondary: #f59e0b; /* Ambers */
+            --accent-secondary: #f59e0b;
             --accent-glow: rgba(249, 115, 22, 0.2);
             --card-bg: rgba(18, 18, 24, 0.75);
             --border-glow: rgba(249, 115, 22, 0.25);
@@ -47,20 +46,38 @@
             transform: translateY(-1px);
         }
 
-        .smooth-tab {
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        .option-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .fade-slide {
-            transition: all 0.3s ease-in-out;
+        .option-card:hover {
+            border-color: rgba(249, 115, 22, 0.5);
+            background: rgba(249, 115, 22, 0.05);
+        }
+        .option-card.selected {
+            border-color: var(--accent-primary);
+            background: rgba(249, 115, 22, 0.12);
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.15);
         }
     </style>
 </head>
 <body class="text-slate-100 min-h-screen selection:bg-orange-500 selection:text-black relative overflow-x-hidden flex flex-col justify-between hero-grid">
 
-    <!-- Ambient Glowing Background Orbs -->
-    <div class="absolute top-[-5%] left-[-20%] w-[250px] h-[250px] sm:w-[500px] sm:h-[500px] bg-orange-600/15 rounded-full blur-[100px] pointer-events-none animate-pulse"></div>
-    <div class="absolute bottom-[-5%]  w-[250px] h-[250px] sm:w-[500px] sm:h-[500px] bg-amber-600/10 rounded-full blur-[100px] pointer-events-none animate-pulse"></div>
+<div id="ai-loader" class="fixed inset-0 bg-[#030305] z-50 flex flex-col items-center justify-center space-y-4 transition-opacity duration-500">
+        <div class="w-12 h-12 rounded-2xl gradient-btn flex items-center justify-center animate-bounce shadow-lg shadow-orange-500/50">
+            <span class="text-2xl font-black text-black">P</span>
+        </div>
+        <div class="text-center space-y-1 px-4">
+            <h3 class="text-white font-extrabold text-sm tracking-wide">Pathzo AI Engine is Initializing...</h3>
+            <p class="text-neutral-500 text-xs">Loading precision career intelligence dashboard</p>
+        </div>
+        <div class="w-48 bg-neutral-900 h-1.5 rounded-full overflow-hidden border border-neutral-800">
+            <div id="loader-bar" class="bg-gradient-to-r from-orange-500 to-amber-500 h-full w-0 transition-all duration-75"></div>
+        </div>
+    </div>
+
+    <div class="absolute top-[-10%] left-[-10%] w-[350px] h-[350px] sm:w-[500px] sm:h-[500px] bg-orange-600/15 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+    <div class="absolute bottom-[-10%]  w-[350px] h-[350px] sm:w-[500px] sm:h-[500px] bg-amber-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+
     <!-- Navigation Bar -->
     <header class="w-full py-4 px-4 sm:px-12 flex justify-between items-center max-w-7xl mx-auto z-10">
         <div class="flex items-center space-x-2.5 group cursor-pointer">
@@ -69,106 +86,78 @@
             </div>
             <span class="text-xl sm:text-2xl font-black tracking-tight gradient-text">Pathzo</span>
         </div>
-        <div class="hidden sm:flex items-center space-x-2 text-xs font-semibold px-4 py-1.5 rounded-full bg-neutral-900/90 border border-neutral-800 text-orange-400 shadow-inner backdrop-blur-md">
-            <span class="w-2 h-2 rounded-full bg-orange-500 animate-ping"></span>
-            <span>pathzo.in</span>
+        <div id="quiz-header-status" class="hidden items-center space-x-3">
+            <div class="text-xs font-semibold px-3 py-1.5 rounded-full bg-neutral-900/90 border border-neutral-800 text-orange-400 backdrop-blur-md">
+                Question <span id="current-q">1</span> of 5
+            </div>
         </div>
     </header>
 
-    <!-- Main Split-Screen Container -->
-    <main class="flex-grow flex items-center justify-center px-6 sm:px-8 py-6 z-10 max-w-7xl mx-auto w-full">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full">
+    <!-- Main Container -->
+    <main class="flex-grow flex items-center justify-center px-4 sm:px-8 py-6 z-10 max-w-4xl mx-auto w-full">
+        
+        <!-- Expanded Stream Selection Screen -->
+        <div id="stream-selection-card" style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="w-full backdrop-blur-2xl rounded-2xl sm:rounded-3xl custom-glow p-6 sm:p-10 space-y-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-[2px]" style="background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);"></div>
             
-            <!-- Left Side Branding -->
-            <div class="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
-                
-                <h1 class="text-3.5xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-                    Find Your True Calling <br class="hidden sm:inline">with <span class="gradient-text">Absolute Precision</span>.
-                </h1>
-                <p class="text-neutral-400 text-sm sm:text-base lg:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    Stop guessing your career path. Pathzo uses an advanced transparent matching algorithm to connect your exact skills with high-growth roles.
-                </p>
-
-                <!-- Feature Mini Badges -->
-                <div class="grid grid-cols-3 gap-2 sm:gap-4 pt-2 sm:pt-4 max-w-md mx-auto lg:mx-0">
-                    <div class="p-3 rounded-xl sm:rounded-2xl bg-neutral-900/60 border border-neutral-800 backdrop-blur-sm text-center lg:text-left">
-                        <div class="text-orange-400 font-bold text-base sm:text-lg">100%</div>
-                        <div class="text-[10px] sm:text-xs text-neutral-400">Transparent</div>
-                    </div>
-                    <div class="p-3 rounded-xl sm:rounded-2xl bg-neutral-900/60 border border-neutral-800 backdrop-blur-sm text-center lg:text-left">
-                        <div class="text-amber-400 font-bold text-base sm:text-lg">AI-Smart</div>
-                        <div class="text-[10px] sm:text-xs text-neutral-400">Analysis</div>
-                    </div>
-                    <div class="p-3 rounded-xl sm:rounded-2xl bg-neutral-900/60 border border-neutral-800 backdrop-blur-sm text-center lg:text-left">
-                        <div class="text-orange-400 font-bold text-base sm:text-lg">Instant</div>
-                        <div class="text-[10px] sm:text-xs text-neutral-400">Dashboard</div>
-                    </div>
-                </div>
+            <div class="space-y-2 text-center">
+                <span class="text-xs font-bold text-orange-400 uppercase tracking-widest">Step 1 of 2 • Background Setup</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Select Your Academic Stream</h2>
+                <p class="text-xs sm:text-sm text-neutral-400">Choose your domain to get a specialized and detailed career evaluation roadmap.</p>
             </div>
 
-            <!-- Right Side:Auth Card with Smooth Animated Tabs -->
-            <div class="lg:col-span-5 flex justify-center w-full">
-                <div style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="w-full max-w-md backdrop-blur-2xl rounded-2xl sm:rounded-3xl custom-glow p-6 sm:p-10 space-y-6 relative overflow-hidden transition-all duration-500">
-                    
-                    <!-- Top Light Border Accent -->
-                    <div class="absolute top-0 left-0 right-0 h-[2px]" style="background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);"></div>
-
-                    <!-- Auth Mode Toggle Tabs with Smooth Transition -->
-                    <div class="flex bg-neutral-950 p-1 rounded-xl border border-neutral-800/80 relative">
-                        <button type="button" id="tab-signin" onclick="setAuthMode('signin')" class="flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-md z-10">
-                            Login
-                        </button>
-                        <button type="button" id="tab-signup" onclick="setAuthMode('signup')" class="flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab text-neutral-400 hover:text-white z-10">
-                            Create Account
-                        </button>
-                    </div>
-
-                    <!-- Header Text with Fade Effect -->
-                    <div id="header-container" class="space-y-1 text-center fade-slide">
-                        <h2 id="form-title" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white">Welcome Back</h2>
-                        <p id="form-subtitle" class="text-xs text-neutral-400">Login to access your assessment dashboard.</p>
-                    </div>
-
-                    <!-- Form -->
-                    <form id="auth-form" class="space-y-4">
-                        <!-- Full Name Field with smooth slide down/up -->
-                        <div id="name-field-container" class="space-y-1 overflow-hidden transition-all duration-300 max-h-0 opacity-0">
-                            <label class="block text-[11px] sm:text-xs font-semibold text-neutral-300 uppercase tracking-wider">Full Name</label>
-                            <input type="text" id="fullname" 
-                                class="w-full px-3.5 py-3 sm:px-4 sm:py-3.5 bg-neutral-950/90 border border-neutral-800 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm text-white placeholder-neutral-600 transition duration-300"
-                                placeholder="Student Name">
-                        </div>
-
-                        <div class="space-y-1">
-                            <label class="block text-[11px] sm:text-xs font-semibold text-neutral-300 uppercase tracking-wider">Email Address</label>
-                            <input type="email" id="email" required 
-                                class="w-full px-3.5 py-3 sm:px-4 sm:py-3.5 bg-neutral-950/90 border border-neutral-800 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm text-white placeholder-neutral-600 transition duration-300"
-                                placeholder="student@college.edu">
-                        </div>
-
-                        <div class="space-y-1">
-                            <label class="block text-[11px] sm:text-xs font-semibold text-neutral-300 uppercase tracking-wider">Password</label>
-                            <input type="password" id="password" required 
-                                class="w-full px-3.5 py-3 sm:px-4 sm:py-3.5 bg-neutral-950/90 border border-neutral-800 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm text-white placeholder-neutral-600 transition duration-300"
-                                placeholder="••••••••">
-                        </div>
-
-                        <button type="submit" id="submit-btn"
-                            class="w-full py-3.5 sm:py-4 gradient-btn text-black font-extrabold text-sm tracking-wide rounded-xl shadow-lg shadow-orange-500/20 transition-all duration-300">
-                            Login 🚀
-                        </button>
-                    </form>
-
-                    <div id="error-msg" class="text-xs text-rose-400 text-center bg-rose-500/10 border border-rose-500/20 py-2.5 rounded-lg hidden"></div>
-
-                    <!-- Footer note inside card -->
-                    <div class="text-center text-[11px] sm:text-xs text-neutral-500 border-t border-neutral-800/80 pt-3 sm:pt-4">
-                        Secured by Firebase Auth
-                    </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-2">
+                <div onclick="selectStream('bca')" class="option-card p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800 cursor-pointer space-y-1">
+                    <div class="text-orange-400 font-bold text-sm">💻 BCA / Tech & IT</div>
+                    <div class="text-[11px] text-neutral-400">Software, Full-Stack, AI & Cloud</div>
+                </div>
+                <div onclick="selectStream('bcom')" class="option-card p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800 cursor-pointer space-y-1">
+                    <div class="text-amber-400 font-bold text-sm">📊 B.Com / Commerce</div>
+                    <div class="text-[11px] text-neutral-400">Finance, Audit, Tax & Banking</div>
+                </div>
+                <div onclick="selectStream('bba')" class="option-card p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800 cursor-pointer space-y-1">
+                    <div class="text-orange-400 font-bold text-sm">📈 BBA / Management</div>
+                    <div class="text-[11px] text-neutral-400">Business Strategy, HR & Marketing</div>
+                </div>
+                <div onclick="selectStream('bsc')" class="option-card p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800 cursor-pointer space-y-1">
+                    <div class="text-amber-400 font-bold text-sm">🔬 BSc / Pure Sciences</div>
+                    <div class="text-[11px] text-neutral-400">Research, Data Analytics & Biotech</div>
+                </div>
+                <div onclick="selectStream('arts')" class="option-card p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800 cursor-pointer space-y-1">
+                    <div class="text-orange-400 font-bold text-sm">🎨 Arts & Humanities</div>
+                    <div class="text-[11px] text-neutral-400">UI/UX Research, Content & Design</div>
+                </div>
+                <div onclick="selectStream('bvoc')" class="option-card p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800 cursor-pointer space-y-1">
+                    <div class="text-amber-400 font-bold text-sm">⚙️ B.Voc / Vocational</div>
+                    <div class="text-[11px] text-neutral-400">Technical Operations & Logistics</div>
                 </div>
             </div>
-
         </div>
+
+        <!--Detailed Quiz Card -->
+        <div id="quiz-card" style="background-color: var(--card-bg); border: 1px solid var(--border-glow);" class="w-full backdrop-blur-2xl rounded-2xl sm:rounded-3xl custom-glow p-6 sm:p-10 space-y-6 relative overflow-hidden hidden">
+            <div class="absolute top-0 left-0 right-0 h-[2px]" style="background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);"></div>
+            <div class="w-full bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full gradient-btn transition-all duration-300" style="width: 20%;"></div>
+            </div>
+
+            <div class="space-y-2">
+                <span id="stream-badge" class="text-xs font-bold text-orange-400 uppercase tracking-widest">Stream Assessment</span>
+                <h2 id="question-text" class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white leading-snug"></h2>
+            </div>
+
+            <div id="options-container" class="grid grid-cols-1 gap-3 pt-2"></div>
+
+            <div class="flex justify-between items-center pt-6 border-t border-neutral-800/80">
+                <button onclick="prevQuestion()" id="prev-btn" class="px-5 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-xs font-bold text-neutral-400 hover:text-white transition duration-200 disabled:opacity-40 cursor-pointer" disabled>
+                    ← Previous
+                </button>
+                <button onclick="nextQuestion()" id="next-btn" class="px-7 py-3 gradient-btn text-black font-extrabold text-xs tracking-wide rounded-xl shadow-lg shadow-orange-500/20 transition-all duration-300 cursor-pointer">
+                    Next Question 🚀
+                </button>
+            </div>
+        </div>
+
     </main>
 
     <!-- Footer -->
@@ -176,170 +165,370 @@
         &copy; 2026 Pathzo. All rights reserved.
     </footer>
 
-    <!-- JavaScript for Switching Animations -->
     <script>
-        function setAuthMode(mode) {
-            const tabSignin = document.getElementById('tab-signin');
-            const tabSignup = document.getElementById('tab-signup');
-            const formTitle = document.getElementById('form-title');
-            const formSubtitle = document.getElementById('form-subtitle');
-            const nameContainer = document.getElementById('name-field-container');
-            const submitBtn = document.getElementById('submit-btn');
-            const headerContainer = document.getElementById('header-container');
-
-            // Soft fade out effect on header text
-            headerContainer.style.opacity = '0';
-            headerContainer.style.transform = 'translateY(-4px)';
-
-            setTimeout(() => {
-                if (mode === 'signin') {
-                    tabSignin.className = "flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-md z-10";
-                    tabSignup.className = "flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab text-neutral-400 hover:text-white z-10";
-                    formTitle.innerText = "Welcome Back";
-                    formSubtitle.innerText = "Login to access your assessment dashboard.";
-                    
-                    // Smooth collapse of Name Field
-                    nameContainer.style.maxHeight = '0px';
-                    nameContainer.style.opacity = '0';
-                    setTimeout(() => nameContainer.classList.add('hidden'), 300);
-
-                    submitBtn.innerText = "Login 🚀";
-                } else {
-                    tabSignup.className = "flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-md z-10";
-                    tabSignin.className = "flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab text-neutral-400 hover:text-white z-10";
-                    formTitle.innerText = "Create Account";
-                    formSubtitle.innerText = "Join Pathzo and start your career discovery.";
-                    
-                    // Smooth expand of Name Field
-                    nameContainer.classList.remove('hidden');
-                    setTimeout(() => {
-                        nameContainer.style.maxHeight = '100px';
-                        nameContainer.style.opacity = '1';
-                    }, 10);
-
-                    submitBtn.innerText = "Create Account ✨";
+        // Highly Detailed Stream-Wise Question Bank covering Interests, Aptitude, Skills, Work Preferences & Experience
+        const streamQuestions = {
+            bca: [
+                {
+                    question: "1. What is your current practical experience level in software development?",
+                    options: [
+                        "Absolute beginner - Learning foundational programming concepts",
+                        "Intermediate student - Built small academic projects & mini apps",
+                        "Hands-on coder - Familiar with frameworks, Git & GitHub portfolios",
+                        "Advanced builder - Completed live internships or freelance projects"
+                    ]
+                },
+                {
+                    question: "2. Which core technical domain excites you the most for building real applications?",
+                    options: [
+                        "Frontend UI/UX & Responsive Web Architecture (React/Tailwind)",
+                        "Backend Systems, Microservices, REST APIs & Databases",
+                        "Artificial Intelligence, Machine Learning & LLM Integrations",
+                        "Cloud DevOps, Infrastructure, Docker & Cybersecurity"
+                    ]
+                },
+                {
+                    question: "3. How would you rate your logical aptitude and problem-solving comfort?",
+                    options: [
+                        "I prefer straightforward logical structures and basic scripting",
+                        "I can comfortably solve moderate data structure and algorithm puzzles",
+                        "I enjoy optimizing heavy algorithms and complex logic flows",
+                        "I love architecting scalable distributed systems from scratch"
+                    ]
+                },
+                {
+                    question: "4. What is your preferred work environment and team role preference?",
+                    options: [
+                        "Creative product team focusing on user interfaces and visual aesthetics",
+                        "Core engineering team managing database architecture and server stability",
+                        "R&D innovation lab experimenting with cutting-edge AI technologies",
+                        "Independent autonomous contributor handling full-cycle deployment"
+                    ]
+                },
+                {
+                    question: "5. What is your primary career target for the next 2 years after graduation?",
+                    options: [
+                        "Senior Frontend or UI/UX Engineer",
+                        "Scalable Back-End / Full-Stack Developer",
+                        "AI/ML Engineer or Data Scientist",
+                        "Cloud DevOps / Security Operations Specialist"
+                    ]
                 }
+            ],
+            bcom: [
+                {
+                    question: "1. What is your current exposure level to corporate commerce and accounting tasks?",
+                    options: [
+                        "Beginner - Learning basic bookkeeping and financial theories",
+                        "Intermediate - Comfortable with ledger accounting and tax rules",
+                        "Practitioner - Experienced with Excel models, Tally, and auditing basics",
+                        "Advanced - Hands-on experience with financial statements and taxation filing"
+                    ]
+                },
+                {
+                    question: "2. Which financial sector domain sparks your professional interest the most?",
+                    options: [
+                        "Corporate Financial Auditing, Compliance & Taxation",
+                        "Investment Banking, Stock Market & Wealth Portfolio Management",
+                        "Digital FinTech, E-Commerce Analytics & Consumer Spending",
+                        "Corporate Financial Planning & Budget Control"
+                    ]
+                },
+                {
+                    question: "3. How comfortable are you with analytical data and financial calculations?",
+                    options: [
+                        "I prefer straightforward arithmetic and basic ledger reporting",
+                        "I enjoy working with spreadsheets, balance sheets, and ratios",
+                        "I like analyzing high-risk investment portfolios and market trends",
+                        "I build comprehensive corporate valuation models and ROI metrics"
+                    ]
+                },
+                {
+                    question: "4. What kind of corporate work culture do you prefer?",
+                    options: [
+                        "Structured auditing firms ensuring regulatory compliance",
+                        "Fast-paced investment banks or stock brokerage houses",
+                        "Modern FinTech startups blending finance with technology",
+                        "Large multinational enterprise finance departments"
+                    ]
+                },
+                {
+                    question: "5. Where do you visualize your leadership role in the corporate ladder?",
+                    options: [
+                        "Chief Tax Consultant / Senior Auditor",
+                        "Wealth Manager / Investment Strategist",
+                        "FinTech Product Strategist / Business Head",
+                        "Corporate CFO / Financial Controller"
+                    ]
+                }
+            ],
+            bba: [
+                {
+                    question: "1. What is your experience level in business management and leadership tasks?",
+                    options: [
+                        "Beginner - Exploring business administration concepts and theories",
+                        "Intermediate - Participated in college fest management or group projects",
+                        "Active Planner - Managed small team workflows or marketing campaigns",
+                        "Experienced - Handled real client communication, pitching, or leadership roles"
+                    ]
+                },
+                {
+                    question: "2. Which management vertical excites you the most?",
+                    options: [
+                        "Strategic Marketing, Brand Management & Consumer Psychology",
+                        "Human Resources, Talent Acquisition & Organizational Culture",
+                        "Operations Management, Supply Chain & Process Efficiency",
+                        "Business Development, Corporate Sales & Client Relations"
+                    ]
+                },
+                {
+                    question: "3. What is your primary strength when working in team projects?",
+                    options: [
+                        "Creative brainstorming and promotional strategy formulation",
+                        "Resolving interpersonal conflicts and coordinating team tasks",
+                        "Streamlining schedules, budgets, and operational deadlines",
+                        "Pitching ideas persuasively and closing deals"
+                    ]
+                },
+                {
+                    question: "4. What type of corporate environment fits your personality best?",
+                    options: [
+                        "Creative marketing agencies with dynamic campaigns",
+                        "Large corporate HR and people operations divisions",
+                        "Logistics hubs and manufacturing operations management",
+                        "High-growth corporate startup boardrooms"
+                    ]
+                },
+                {
+                    question: "5. What is your ultimate career ambition?",
+                    options: [
+                        "Chief Marketing Officer (CMO)",
+                        "Chief Human Resources Officer (CHRO)",
+                        "Chief Operating Officer (COO)",
+                        "Chief Executive Officer (CEO) / Founder"
+                    ]
+                }
+            ],
+            bsc: [
+                {
+                    question: "1. What is your academic and practical exposure in scientific research?",
+                    options: [
+                        "Beginner - Focused on core theoretical science subjects",
+                        "Intermediate - Conducted standard laboratory experiments and data collection",
+                        "Analyst - Used statistical tools (Python/R/Excel) for experimental analysis",
+                        "Researcher - Published papers or completed advanced scientific projects"
+                    ]
+                },
+                {
+                    question: "2. Which scientific application field interests you the most?",
+                    options: [
+                        "Data Science, Applied Statistics & Predictive Modeling",
+                        "Biotechnology, Pharmaceuticals & Life Sciences Research",
+                        "Environmental Science, Sustainability & Green Tech",
+                        "Core Laboratory Research & Chemical Analysis"
+                    ]
+                },
+                {
+                    question: "3. How do you approach problem-solving in complex datasets?",
+                    options: [
+                        "By observing natural patterns and recording manual observations",
+                        "By running statistical hypothesis tests and data validations",
+                        "By building algorithmic models to simulate scientific outcomes",
+                        "By conducting extensive laboratory trial and error tests"
+                    ]
+                },
+                {
+                    question: "4. What kind of working setup do you prefer?",
+                    options: [
+                        "Data analytics research labs and tech corporations",
+                        "Advanced pharmaceutical and biotech research facilities",
+                        "Environmental policy and sustainability consulting firms",
+                        "Academic or government research institutions"
+                    ]
+                },
+                {
+                    question: "5. What is your career destination goal?",
+                    options: [
+                        "Senior Data Scientist / Statistical Analyst",
+                        "Principal Research Scientist / Biotech Specialist",
+                        "Environmental Consultant / Sustainability Director",
+                        "Lead R&D Innovator"
+                    ]
+                }
+            ],
+            arts: [
+                {
+                    question: "1. What is your practical experience in creative communication and media?",
+                    options: [
+                        "Beginner - Passionate about writing, reading, or visual arts",
+                        "Intermediate - Created personal blogs, art portfolios, or college essays",
+                        "Active Creator - Published articles, managed design handles, or media pages",
+                        "Professional - Freelanced in content writing, UX research, or graphic design"
+                    ]
+                },
+                {
+                    question: "2. Which creative domain aligns best with your core passion?",
+                    options: [
+                        "Content Strategy, Copywriting, Journalism & Editorial Publishing",
+                        "User Experience (UX) Research, Psychology & Interaction Design",
+                        "Graphic Design, Branding, Multimedia & Visual Storytelling",
+                        "Human Resources, Public Relations & Community Leadership"
+                    ]
+                },
+                {
+                    question: "3. How do you prefer communicating ideas to an audience?",
+                    options: [
+                        "Through powerful words, storytelling, and compelling narratives",
+                        "By studying human behavior and designing seamless user experiences",
+                        "Through striking visual aesthetics, typography, and color psychology",
+                        "By facilitating open discussions, debates, and public speaking"
+                    ]
+                },
+                {
+                    question: "4. What workplace environment inspires you the most?",
+                    options: [
+                        "Digital media publishing houses and literary agencies",
+                        "Product design studios and user research labs",
+                        "Creative advertising agencies and brand houses",
+                        "Corporate communication and public relations departments"
+                    ]
+                },
+                {
+                    question: "5. What is your dream professional milestone?",
+                    options: [
+                        "Head Content Strategist / Editorial Director",
+                        "Lead UX Researcher / Product Designer",
+                        "Creative Director / Brand Architect",
+                        "Chief Communications Officer / PR Head"
+                    ]
+                }
+            ],
+            bvoc: [
+                {
+                    question: "1. What is your hands-on practical experience level in technical operations?",
+                    options: [
+                        "Beginner - Learning basic hardware and technical fundamentals",
+                        "Intermediate - Performed standard lab maintenance and tool handling",
+                        "Skilled Technician - Configured networks, media equipment, or systems",
+                        "Advanced Practitioner - Managed complete technical workflows or supply chains"
+                    ]
+                },
+                {
+                    question: "2. Which vocational specialization matches your core practical strength?",
+                    options: [
+                        "Hardware Troubleshooting, LAN Networking & IT Support",
+                        "Digital Media Production, Video Editing & Post-Processing",
+                        "Industrial Equipment Maintenance & Applied Technical Operations",
+                        "Supply Chain Operations, Warehouse Logistics & Inventory Control"
+                    ]
+                },
+                {
+                    question: "3. How do you approach fixing a broken operational system?",
+                    options: [
+                        "By diagnosing hardware connections, routers, and system logs",
+                        "By re-editing frames, balancing audio, and rendering visual media",
+                        "By inspecting machinery mechanics and applying quick physical fixes",
+                        "By auditing supply chain bottlenecks and transport schedules"
+                    ]
+                },
+                {
+                    question: "4. What type of work environment suits your practical skills best?",
+                    options: [
+                        "IT infrastructure management and tech support centers",
+                        "Media production houses, broadcast studios, and editing bays",
+                        "Manufacturing plants and technical operations facilities",
+                        "E-commerce fulfillment centers and logistics supply hubs"
+                    ]
+                },
+                {
+                    question: "5. Where do you see your career growth heading?",
+                    options: [
+                        "Lead Network Administrator / IT Manager",
+                        "Senior Multimedia Producer / Post-Production Head",
+                        "Technical Operations Supervisor / Plant Head",
+                        "Supply Chain Director / Logistics Manager"
+                    ]
+                }
+            ]
+        };
 
-                // Fade back in with smooth movement
-                headerContainer.style.opacity = '1';
-                headerContainer.style.transform = 'translateY(0px)';
-            }, 150);
+        let currentStream = '';
+        let currentQuestion = 0;
+        let selectedAnswers = {};
+
+        function selectStream(streamKey) {
+            currentStream = streamKey;
+            currentQuestion = 0;
+            selectedAnswers = {};
+
+            document.getElementById('stream-selection-card').classList.add('hidden');
+            document.getElementById('quiz-card').classList.remove('hidden');
+            document.getElementById('quiz-header-status').classList.add('flex');
+
+            document.getElementById('stream-badge').innerText = `${streamKey.toUpperCase()} Detailed Career Assessment`;
+            updateQuizUI();
         }
-    </script>
 
-    <!-- fb login -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        function selectOption(element) {
+            document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedAnswers[currentQuestion] = element.querySelector('span').innerText;
+        }
 
-    // 1. Apni Firebase config details 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBmphU8YB8XD8MEgYQKWOtiCX3b-d0sDIQ",
-        authDomain: "pathzo.firebaseapp.com",
-        projectId: "pathzo",
-        storageBucket: "pathzo.firebasestorage.app",
-        messagingSenderId: "138160652590",
-        appId: "1:138160652590:web:c5748340ee97893d233abf",
-        measurementId: "G-VVC7XBBSSH"
-    };
+        function updateQuizUI() {
+            const questions = streamQuestions[currentStream];
+            const q = questions[currentQuestion];
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+            document.getElementById('current-q').innerText = currentQuestion + 1;
+            document.getElementById('question-text').innerText = q.question;
+            document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
 
-    let currentMode = 'signin';
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
 
-    // Global function to toggle Sign In / Sign Up UI
-    window.setAuthMode = function(mode) {
-        currentMode = mode;
-        const tabSignin = document.getElementById('tab-signin');
-        const tabSignup = document.getElementById('tab-signup');
-        const formTitle = document.getElementById('form-title');
-        const formSubtitle = document.getElementById('form-subtitle');
-        const nameContainer = document.getElementById('name-field-container');
-        const submitBtn = document.getElementById('submit-btn');
-        const headerContainer = document.getElementById('header-container');
-        const errorMsg = document.getElementById('error-msg');
+            q.options.forEach((opt, idx) => {
+                const letter = String.fromCharCode(65 + idx);
+                const isSelected = selectedAnswers[currentQuestion] === opt ? 'selected' : '';
+                optionsContainer.innerHTML += `
+                    <div onclick="selectOption(this)" class="option-card p-4 sm:p-5 rounded-2xl bg-neutral-950/70 border border-neutral-800 cursor-pointer flex items-center space-x-4 ${isSelected}">
+                        <div class="w-6 h-6 rounded-full border border-neutral-700 flex items-center justify-center text-xs font-bold text-neutral-400">${letter}</div>
+                        <span class="text-sm sm:text-base font-medium text-neutral-200">${opt}</span>
+                    </div>
+                `;
+            });
 
-        errorMsg.classList.add('hidden');
-        headerContainer.style.opacity = '0';
-        headerContainer.style.transform = 'translateY(-4px)';
-
-        setTimeout(() => {
-            if (mode === 'signin') {
-                tabSignin.className = "flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-md z-10";
-                tabSignup.className = "flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab text-neutral-400 hover:text-white z-10";
-                formTitle.innerText = "Welcome Back";
-                formSubtitle.innerText = "Login to access your assessment dashboard.";
-                
-                nameContainer.style.maxHeight = '0px';
-                nameContainer.style.opacity = '0';
-                setTimeout(() => nameContainer.classList.add('hidden'), 300);
-
-                submitBtn.innerText = "Login 🚀";
+           
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('next-btn').innerText = "View Results ✨";
             } else {
-                tabSignup.className = "flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab bg-gradient-to-r from-orange-500 to-amber-500 text-black shadow-md z-10";
-                tabSignin.className = "flex-1 py-2.5 text-xs font-bold rounded-lg smooth-tab text-neutral-400 hover:text-white z-10";
-                formTitle.innerText = "Create Account";
-                formSubtitle.innerText = "Join Pathzo and start your career discovery.";
-                
-                nameContainer.classList.remove('hidden');
-                setTimeout(() => {
-                    nameContainer.style.maxHeight = '100px';
-                    nameContainer.style.opacity = '1';
-                }, 10);
-
-                submitBtn.innerText = "Create Account ✨";
+                document.getElementById('next-btn').innerText = "Next Question 🚀";
             }
+        }
 
-            headerContainer.style.opacity = '1';
-            headerContainer.style.transform = 'translateY(0px)';
-        }, 150);
-    }
-
-    // Handle Form Submission (Sign In & Sign Up)
-    document.getElementById('auth-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const errorDiv = document.getElementById('error-msg');
-        errorDiv.classList.add('hidden');
-
-        try {
-            if (currentMode === 'signup') {
-                const fullName = document.getElementById('fullname').value;
-                
-                // 1. Create New Account in Firebase Auth
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                
-                // 2. Update Firebase User Profile with Full Name
-                await updateProfile(userCredential.user, {
-                    displayName: fullName
-                });
-
-                // 3. Save in localStorage for instant dashboard usage
-                localStorage.setItem('pathzo_username', fullName);
-
-                console.log("Account Created & Name Saved:", userCredential.user);
-                window.location.href = 'quiz.html';
+        function nextQuestion() {
+            const questions = streamQuestions[currentStream];
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                updateQuizUI();
             } else {
-                // Sign In Existing User
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                
-                // Agar user ka displayName pehle se hai toh localStorage mein set kar lo
-                if (userCredential.user.displayName) {
-                    localStorage.setItem('pathzo_username', userCredential.user.displayName);
-                }
-
-                console.log("Logged In:", userCredential.user);
+                localStorage.setItem('pathzo_stream', currentStream);
+                localStorage.setItem('pathzo_answers', JSON.stringify(selectedAnswers));
                 window.location.href = 'dashboard.html';
             }
-        } catch (error) {
-            errorDiv.innerText = error.message;
-            errorDiv.classList.remove('hidden');
         }
-    });
-</script>
 
+        function prevQuestion() {
+    if (currentQuestion > 0) {
+        currentQuestion--;
+        updateQuizUI();
+    } else {
+        // Yahan stream selection card wapas laane ka logic hai
+        document.getElementById('quiz-card').classList.add('hidden');
+        document.getElementById('stream-selection-card').classList.remove('hidden');
+        document.getElementById('quiz-header-status').classList.remove('flex');
+        document.getElementById('quiz-header-status').classList.add('hidden');
+    }
+}
+    </script>
 </body>
 </html>
